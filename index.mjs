@@ -451,7 +451,10 @@ class HTMLTemplate {
                 return null;
             }
             
-            const schemaType = data['@context'] + '/' + data['@type'];
+            const context = data['@context'].endsWith('/') 
+                ? data['@context'].slice(0, -1) 
+                : data['@context'];
+            const schemaType = context + '/' + data['@type'];
             const typedTemplate = this._templateCache.rootElements.find(
                 t => t.itemtype === schemaType
             );
