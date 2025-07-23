@@ -299,7 +299,7 @@ Similarly, we could invert the template:
     <template>
         <ul>
             <li itemscope itemtype="https://schema.org/Action">
-                <span itemprop="name"></span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" scope="@id"></span>
+                <span itemprop="name"></span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" data-constraint="@id==agent"></span>
             </li>            
         </ul>
     </template>
@@ -335,18 +335,106 @@ Similarly, we could invert the template:
         element.outerHTML
         //<ul>
         //    <li itemscope itemtype="https://schema.org/Action">
-        //        <span itemprop="name">Take the bins out</span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" scope="@id">John Doe</span>
+        //        <span itemprop="name">Take the bins out</span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" data-constraint="@id==agent">John Doe</span>
         //    </li>            
         //    <li itemscope itemtype="https://schema.org/Action">
-        //        <span itemprop="name">Pick up milk</span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" scope="@id">John Doe</span>
+        //        <span itemprop="name">Pick up milk</span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" data-constraint="@id==agent">John Doe</span>
         //    </li>            
         //    <li itemscope itemtype="https://schema.org/Action">
-        //        <span itemprop="name">Reboot the server</span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" scope="@id">Jane Doe</span>
+        //        <span itemprop="name">Reboot the server</span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" data-constraint="@id==agent">Jane Doe</span>
         //    </li>            
         //</ul>
     </script>
     ```
 
-# Test system
+## Other Input Data
 
-Tests are run 
+Templates can also be rendered with other data sources, first and foremost, 
+other microdata elements.
+
+    ```html
+    <ul>
+        <li itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">John Doe</span>
+        </li>
+        <li itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Jane Doe</span>
+        </li>
+    </ul>
+    <template>        
+        <div itemscope itemtype="https://schema.org/Person">
+            <h1 itemprop="name"></h1>
+        </div>        
+    </template>
+    <script>
+        import { HTMLTemplate } from "./index.mjs";
+        const tmpl = new HTMLTemplate( document.querySelector('template') );
+        const element = tmpl.render( document.querySelector('ul') );
+        element.map( e => e.outerHTML )
+        // ['<div itemscope itemtype="https://schema.org/Person">
+        //   <h1>John Doe</h1>
+        // </div>',
+        // '<div itemscope itemtype="https://schema.org/Person">
+        //   <h1>Jane Doe</h1>
+        // </div>']
+    </script>
+    ```
+
+If the microdata elements have an id attribute, then the rendered elements will get
+the itemid attribute, and reference the source:
+
+   ```html
+    <base href="https://example.com/people">
+    <ul>
+        <li id="johndoe" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">John Doe</span>
+        </li>
+        <li id="janedoe" itemscope itemtype="https://schema.org/Person">
+            <span itemprop="name">Jane Doe</span>
+        </li>
+    </ul>
+    <template>        
+        <div itemscope itemtype="https://schema.org/Person">
+            <h1 itemprop="name"></h1>
+        </div>        
+    </template>
+    <script>
+        import { HTMLTemplate } from "./index.mjs";
+        const tmpl = new HTMLTemplate( document.querySelector('template') );
+        const element = tmpl.render( document.querySelector('ul') );
+        element.map( e => e.outerHTML )
+        // ['<div itemscope itemtype="https://schema.org/Person" itemid="https://example.com/people#johndoe>
+        //   <h1>John Doe</h1>
+        // </div>',
+        // '<div itemscope itemtype="https://schema.org/Person" itemid="https://example.com/people#janedoe>
+        //   <h1>Jane Doe</h1>
+        // </div>']
+    </script>
+    ```
+
+Templates can also be rendered from a form. To specify nested properties in the form, use
+dot notation in the form element's name.
+
+   ```html
+    <form>
+        <label>Name</label><input type="text" name="name" placeholder="Enter your name">
+        <button>Submit</button>
+    </form>
+    <template>        
+        <div itemscope itemtype="https://schema.org/Person">
+            <h1 itemprop="name"></h1>
+        </div>        
+    </template>
+    <script>
+        import { HTMLTemplate } from "./index.mjs";
+        const tmpl = new HTMLTemplate( document.querySelector('template') );
+        document.forms[0].addEventListener('submit', (e) => {
+            e.preventDefault();
+            const element = tmpl.render( document.forms[0] );
+            element.map( e => e.outerHTML )
+            // '<div itemscope itemtype="https://schema.org/Person">
+            //   <h1>John Doe</h1>
+            // </div>',
+        })
+    </script>
+    ```
