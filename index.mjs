@@ -646,13 +646,13 @@ class HTMLTemplate {
     }
     
     /**
-     * Adds itemid attribute if data has @id
+     * Adds itemid attribute if data has @id and element doesn't already have one
      * @private
      * @param {Element} element - The element to modify
      * @param {Object} data - The data containing @id
      */
     _addItemId(element, data) {
-        if (data && data['@id'] && element.hasAttribute('itemscope')) {
+        if (data && data['@id'] && element.hasAttribute('itemscope') && !element.hasAttribute('itemid')) {
             const baseURI = document.baseURI;
             element.setAttribute('itemid', baseURI + '#' + data['@id']);
         }
