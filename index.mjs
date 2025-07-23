@@ -514,6 +514,11 @@ class HTMLTemplate {
         
         // Handle arrays
         if (structure.isArray && structure.cleanItemprop && data[structure.cleanItemprop]) {
+            // Special handling for checkboxes and radio buttons with array notation
+            if (element.tagName === 'INPUT' && (element.type === 'checkbox' || element.type === 'radio')) {
+                this._processCheckboxRadioArray(element, structure, data[structure.cleanItemprop]);
+                return;
+            }
             this._processArray(element, structure, data[structure.cleanItemprop], context);
             return;
         }
@@ -655,6 +660,35 @@ class HTMLTemplate {
         if (data && data['@id'] && element.hasAttribute('itemscope') && !element.hasAttribute('itemid')) {
             const baseURI = document.baseURI;
             element.setAttribute('itemid', baseURI + '#' + data['@id']);
+        }
+    }
+    
+    /**
+     * Processes checkbox/radio button arrays
+     * @private
+     * @param {Element} element - The checkbox/radio element
+     * @param {Object} structure - The element's structure
+     * @param {Array} arrayData - The array of selected values
+     */
+    _processCheckboxRadioArray(element, structure, arrayData) {
+        if (!Array.isArray(arrayData)) {
+            console.warn('Expected array for property:', structure.cleanItemprop);
+            return;
+        }
+        
+        // Clean up array notation in itemprop
+        if (structure.isArray) {
+            element.setAttribute('itemprop', structure.cleanItemprop);
+        }
+        
+        // Check/uncheck based on whether value is in array
+        const elementValue = element.value;
+        if (arrayData.includes(elementValue)) {
+            element.checked = true;
+            element.setAttribute('checked', 'checked');
+        } else {
+            element.checked = false;
+            element.removeAttribute('checked');
         }
     }
     
