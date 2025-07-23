@@ -440,6 +440,17 @@ class HTMLTemplate {
      */
     _findMatchingTemplate(data) {
         if (data['@type'] && !this.selector) {
+            // @type requires @context to be meaningful
+            if (!data['@context']) {
+                console.warn('@type specified without @context - type matching skipped:', data['@type']);
+                // Treat as untyped data
+                const firstTemplate = this._templateCache.rootElements[0];
+                if (firstTemplate && !firstTemplate.itemtype) {
+                    return firstTemplate;
+                }
+                return null;
+            }
+            
             const schemaType = data['@context'] + '/' + data['@type'];
             const typedTemplate = this._templateCache.rootElements.find(
                 t => t.itemtype === schemaType
