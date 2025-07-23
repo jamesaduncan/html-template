@@ -162,10 +162,27 @@ template.render({
 
 ### Type Resolution Rules
 
-1. If data has `@type` and template has matching `itemtype`, they are paired
-2. First matching template wins when multiple templates exist
-3. Untyped templates match untyped data
-4. Templates with types only match data with correct types
+1. **@type requires @context** - Data with `@type` but no `@context` is treated as untyped
+2. If data has valid `@type` and `@context`, and template has matching `itemtype`, they are paired
+3. First matching template wins when multiple templates exist
+4. Untyped templates match untyped data
+5. Templates with types only match data with correct types
+
+**Important:** Always include both `@type` and `@context` together:
+```javascript
+// ✅ Correct
+{
+    "@type": "Person",
+    "@context": "https://schema.org",
+    "name": "John Doe"
+}
+
+// ❌ Incorrect - @type without @context
+{
+    "@type": "Person",
+    "name": "John Doe"
+}
+```
 
 ## Data Extraction
 

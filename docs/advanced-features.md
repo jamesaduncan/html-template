@@ -278,18 +278,21 @@ const data = [
 const socialGraph = [
     {
         "@type": "Person",
+        "@context": "https://schema.org",
         "@id": "user1",
         "name": "User One",
         "follows": ["#user2", "#user3"]
     },
     {
-        "@type": "Person", 
+        "@type": "Person",
+        "@context": "https://schema.org",
         "@id": "user2",
         "name": "User Two",
         "follows": ["#user1", "#user3"]
     },
     {
         "@type": "Person",
+        "@context": "https://schema.org",
         "@id": "user3", 
         "name": "User Three",
         "follows": ["#user1"]

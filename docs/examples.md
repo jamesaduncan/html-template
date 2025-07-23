@@ -47,7 +47,7 @@ This guide provides practical examples of HTMLTemplate in real-world scenarios.
 </template>
 
 <script type="module">
-import { HTMLTemplate } from './index.mjs';
+import { HTMLTemplate } from 'https://jamesaduncan.github.io/html-template/index.mjs';
 
 const template = new HTMLTemplate(document.getElementById('product-catalog'));
 
@@ -62,6 +62,7 @@ const products = [
         "category": "electronics",
         "offers": {
             "@type": "Offer",
+            "@context": "https://schema.org",
             "price": "1299.99",
             "priceCurrency": "USD",
             "availability": "InStock"
@@ -81,6 +82,7 @@ const products = [
         "category": "accessories",
         "offers": {
             "@type": "Offer",
+            "@context": "https://schema.org",
             "price": "79.99",
             "priceCurrency": "USD",
             "availability": "OutOfStock"
@@ -173,6 +175,7 @@ const blogPost = {
     "readingTime": 5,
     "author": {
         "@type": "Person",
+        "@context": "https://schema.org",
         "name": "Sarah Chen",
         "jobTitle": "Senior Frontend Engineer",
         "image": "/avatars/sarah.jpg"
@@ -183,6 +186,7 @@ const blogPost = {
     "comment": [
         {
             "@type": "Comment",
+            "@context": "https://schema.org",
             "author": "Alex Kumar",
             "dateCreated": "2024-01-15T14:30:00Z",
             "text": "Great article! Very helpful for understanding web components.",
@@ -195,6 +199,7 @@ const blogPost = {
         },
         {
             "@type": "Comment",
+            "@context": "https://schema.org",
             "author": "Maria Garcia",
             "dateCreated": "2024-01-15T16:45:00Z",
             "text": "Could you provide more examples of shadow DOM usage?",

@@ -7,14 +7,14 @@ This guide will help you get up and running with HTMLTemplate quickly.
 HTMLTemplate is a single ES module file with no dependencies. Simply include it in your project:
 
 ```javascript
-import { HTMLTemplate } from './index.mjs';
+import { HTMLTemplate } from 'https://jamesaduncan.github.io/html-template/index.mjs';
 ```
 
 Or use it directly in an HTML file:
 
 ```html
 <script type="module">
-import { HTMLTemplate } from './index.mjs';
+import { HTMLTemplate } from 'https://jamesaduncan.github.io/html-template/index.mjs';
 // Your code here
 </script>
 ```
@@ -111,7 +111,7 @@ Use `[]` notation for arrays (automatically stripped in output):
 </template>
 
 <script type="module">
-import { HTMLTemplate } from './index.mjs';
+import { HTMLTemplate } from 'https://jamesaduncan.github.io/html-template/index.mjs';
 
 const template = new HTMLTemplate(document.getElementById('card'));
 const card = template.render({

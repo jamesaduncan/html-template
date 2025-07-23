@@ -4,16 +4,6 @@
 
 HTMLTemplate is a powerful, microdata-based HTML templating system that bridges the gap between semantic HTML and dynamic data rendering. It leverages HTML5 microdata attributes (`itemprop`, `itemtype`, `itemscope`) to create templates that are both machine-readable and human-maintainable.
 
-## Table of Contents
-
-1. [Overview](overview.md) - This document
-2. [Getting Started](getting-started.md) - Quick start guide and basic examples
-3. [API Reference](api-reference.md) - Detailed API documentation
-4. [Template Syntax](template-syntax.md) - Complete guide to template markup
-5. [Data Sources](data-sources.md) - Working with different data sources
-6. [Advanced Features](advanced-features.md) - Constraints, scoping, and type matching
-7. [Examples](examples.md) - Real-world usage examples
-
 ## Key Features
 
 ### 1. **Microdata-Based Templating**
@@ -75,7 +65,7 @@ By leveraging Schema.org types, HTMLTemplate provides a form of "type safety" fo
 </template>
 
 <script type="module">
-import { HTMLTemplate } from './index.mjs';
+import { HTMLTemplate } from 'https://jamesaduncan.github.io/html-template/index.mjs';
 
 const template = new HTMLTemplate(document.getElementById('person-template'));
 const element = template.render({
