@@ -1,0 +1,27 @@
+{
+  "name": "html-template",
+  "version": "1.0.0",
+  "description": "A simple templating language for HTML, that is based on the template tag, and the itemprop/itemtype/itemscope attributes.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jamesaduncan/html-template.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jamesaduncan/html-template/issues"
+  },
+  "homepage": "https://github.com/jamesaduncan/html-template#readme",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
