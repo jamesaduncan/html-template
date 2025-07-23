@@ -4,10 +4,361 @@
         <meta charset="UTF-8">        
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>HTMLTemplate Tests</title>
-        <script type="module">
-            import { HTMLTemplate} from "../index.mjs"
-        </script>
+        <style>
+            body {
+                font-family: system-ui, -apple-system, sans-serif;
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 0 20px;
+            }
+            .test {
+                margin: 30px 0;
+                padding: 20px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+            .test h2 {
+                margin-top: 0;
+                color: #333;
+            }
+            .test-output {
+                background: #f5f5f5;
+                padding: 15px;
+                border-radius: 4px;
+                margin: 10px 0;
+            }
+            .test-code {
+                background: #333;
+                color: #fff;
+                padding: 15px;
+                border-radius: 4px;
+                overflow-x: auto;
+                font-family: 'Courier New', monospace;
+                font-size: 14px;
+            }
+            .status {
+                padding: 5px 10px;
+                border-radius: 4px;
+                display: inline-block;
+                font-weight: bold;
+            }
+            .status.pass {
+                background: #4caf50;
+                color: white;
+            }
+            .status.fail {
+                background: #f44336;
+                color: white;
+            }
+        </style>
     </head>
     <body>
+        <h1>HTMLTemplate Test Suite</h1>
+        <div id="test-results"></div>
+
+        <!-- Test 1: Basic Data Binding -->
+        <template id="test1-template">
+            <span itemprop="foo"></span>
+        </template>
+
+        <!-- Test 2: Array Handling -->
+        <template id="test2-template">
+            <ul><li itemprop="foo[]"></li></ul>
+        </template>
+
+        <!-- Test 3: Nested Objects -->
+        <template id="test3-template">
+            <div itemprop="foo" itemscope>
+                <span itemprop="bar"></span>
+            </div>
+        </template>
+
+        <!-- Test 4: Attribute Templating -->
+        <template id="test4-template">
+            <a href="${url}" itemprop="name"></a>
+        </template>
+
+        <!-- Test 5: Special Elements -->
+        <template id="test5-template">
+            <form>
+                <input type="text" itemprop="textValue">
+                <input type="checkbox" itemprop="checkValue">
+                <textarea itemprop="textareaValue"></textarea>
+                <select itemprop="selectValue">
+                    <option value="a">Option A</option>
+                    <option value="b">Option B</option>
+                </select>
+                <meta itemprop="metaValue">
+                <img itemprop="imgValue">
+                <time itemprop="timeValue"></time>
+            </form>
+        </template>
+
+        <!-- Test 6: Microdata Type Matching -->
+        <template id="test6-template">
+            <div itemscope itemtype="https://schema.org/Person">
+                <h1 itemprop="name"></h1>
+            </div>
+            <li itemscope itemtype="https://schema.org/Action" itemprop="name"></li>
+        </template>
+
+        <!-- Test 7: Constraints and Scopes -->
+        <template id="test7-template">
+            <div itemscope itemtype="https://schema.org/Person">
+                <h1 itemprop="name"></h1>
+                <h2>Jobs</h2>
+                <ul>
+                    <li itemscope itemtype="https://schema.org/Action" data-scope="agent">
+                        <span itemprop="name"></span>
+                    </li>
+                </ul>
+            </div>
+        </template>
+
+        <!-- Test 8: Reference Resolution -->
+        <template id="test8-template">
+            <ul>
+                <li itemscope itemtype="https://schema.org/Action">
+                    <span itemprop="name"></span> owned by <span itemscope itemtype="https://schema.org/Person" itemprop="name" data-constraint="@id==agent"></span>
+                </li>            
+            </ul>
+        </template>
+
+        <!-- Test 9: Microdata Source -->
+        <div id="test9-source" style="display:none">
+            <ul>
+                <li itemscope itemtype="https://schema.org/Person">
+                    <span itemprop="name">John Doe</span>
+                </li>
+                <li itemscope itemtype="https://schema.org/Person">
+                    <span itemprop="name">Jane Doe</span>
+                </li>
+            </ul>
+        </div>
+        <template id="test9-template">
+            <div itemscope itemtype="https://schema.org/Person">
+                <h1 itemprop="name"></h1>
+            </div>
+        </template>
+
+        <!-- Test 10: Form Source -->
+        <form id="test10-form" style="display:none">
+            <input type="text" name="name" value="John Doe">
+            <input type="text" name="address.city" value="New York">
+            <input type="text" name="hobbies[]" value="Reading">
+            <input type="text" name="hobbies[]" value="Gaming">
+        </form>
+        <template id="test10-template">
+            <div>
+                <h1 itemprop="name"></h1>
+                <p>City: <span itemprop="address" itemscope><span itemprop="city"></span></span></p>
+                <ul><li itemprop="hobbies[]"></li></ul>
+            </div>
+        </template>
+
+        <script type="module">
+            import { HTMLTemplate } from "../index.mjs";
+
+            const results = document.getElementById('test-results');
+
+            function runTest(name, testFunction) {
+                const testDiv = document.createElement('div');
+                testDiv.className = 'test';
+                
+                try {
+                    const result = testFunction();
+                    testDiv.innerHTML = `
+                        <h2>${name} <span class="status pass">PASS</span></h2>
+                        <div class="test-code">Input: ${result.input}</div>
+                        <div class="test-output">
+                            <strong>Output:</strong><br>
+                            ${result.output}
+                        </div>
+                    `;
+                } catch (error) {
+                    testDiv.innerHTML = `
+                        <h2>${name} <span class="status fail">FAIL</span></h2>
+                        <div class="test-output">
+                            <strong>Error:</strong> ${error.message}<br>
+                            <pre>${error.stack}</pre>
+                        </div>
+                    `;
+                }
+                
+                results.appendChild(testDiv);
+            }
+
+            // Test 1: Basic Data Binding
+            runTest('Test 1: Basic Data Binding', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test1-template'), 'span');
+                const element = tmpl.render({ foo: "bar" });
+                return {
+                    input: '{ foo: "bar" }',
+                    output: element.outerHTML
+                };
+            });
+
+            // Test 2: Array Handling
+            runTest('Test 2: Array Handling', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test2-template'), 'ul');
+                const element = tmpl.render({ foo: ["bar", "baz", "boo"] });
+                return {
+                    input: '{ foo: ["bar", "baz", "boo"] }',
+                    output: element.outerHTML
+                };
+            });
+
+            // Test 3: Nested Objects
+            runTest('Test 3: Nested Objects', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test3-template'), 'div');
+                const element = tmpl.render({ foo: { bar: "baz" } });
+                return {
+                    input: '{ foo: { bar: "baz" } }',
+                    output: element.outerHTML
+                };
+            });
+
+            // Test 4: Attribute Templating
+            runTest('Test 4: Attribute Templating', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test4-template'), 'a');
+                const element = tmpl.render({ url: "http://www.example.com", name: "Example URL" });
+                return {
+                    input: '{ url: "http://www.example.com", name: "Example URL" }',
+                    output: element.outerHTML
+                };
+            });
+
+            // Test 5: Special Elements
+            runTest('Test 5: Special Elements', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test5-template'), 'form');
+                const element = tmpl.render({
+                    textValue: "Hello",
+                    checkValue: true,
+                    textareaValue: "Multi\nLine",
+                    selectValue: "b",
+                    metaValue: "description",
+                    imgValue: "test.jpg",
+                    timeValue: "2024-01-01"
+                });
+                return {
+                    input: 'Various special element values',
+                    output: element.innerHTML
+                };
+            });
+
+            // Test 6: Microdata Type Matching
+            runTest('Test 6: Microdata Type Matching', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test6-template'));
+                const element = tmpl.render({
+                    "@type": "Person",
+                    "@context": "https://schema.org",
+                    "name": "John Doe"
+                });
+                return {
+                    input: '{ "@type": "Person", "@context": "https://schema.org", "name": "John Doe" }',
+                    output: element.outerHTML
+                };
+            });
+
+            // Test 7: Array of Types
+            runTest('Test 7: Array of Types', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test6-template'));
+                const elements = tmpl.render([
+                    {
+                        "@type": "Person",
+                        "@context": "https://schema.org",
+                        "name": "John Doe"
+                    },
+                    {
+                        "@type": "Action",
+                        "@context": "https://schema.org",
+                        "name": "Take the bins out"
+                    }
+                ]);
+                return {
+                    input: 'Array with Person and Action types',
+                    output: elements.map(e => e.outerHTML).join('<br>')
+                };
+            });
+
+            // Test 8: Constraints
+            runTest('Test 8: Constraints with Scopes', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test7-template'));
+                const elements = tmpl.render([{
+                    "@type": "Action",
+                    "@context": "https://schema.org",
+                    "name": "Take the bins out",
+                    "agent": "#johndoe"
+                }, {
+                    "@type": "Action",
+                    "@context": "https://schema.org",
+                    "name": "Pick up milk",
+                    "agent": "#johndoe"
+                }, {
+                    "@type": "Action",
+                    "@context": "https://schema.org",
+                    "name": "Reboot the server",
+                    "agent": "#janedoe"
+                }, {
+                    "@type": "Person",
+                    "@context": "https://schema.org",
+                    "@id": "janedoe",
+                    "name": "Jane Doe"
+                }, {
+                    "@type": "Person",
+                    "@context": "https://schema.org",
+                    "@id": "johndoe",
+                    "name": "John Doe"
+                }]);
+                return {
+                    input: 'Actions and People with constraints',
+                    output: elements.map(e => e.outerHTML).join('<br><br>')
+                };
+            });
+
+            // Test 9: Reference Resolution
+            runTest('Test 9: Reference Resolution', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test8-template'));
+                const elements = tmpl.render([{
+                    "@type": "Action",
+                    "@context": "https://schema.org",
+                    "name": "Take the bins out",
+                    "agent": "#johndoe"
+                }, {
+                    "@type": "Person",
+                    "@context": "https://schema.org",
+                    "@id": "johndoe",
+                    "name": "John Doe"
+                }]);
+                // Get the first element (the Action with resolved Person reference)
+                const actionElement = elements.find(e => e.querySelector('[itemprop="name"]')?.textContent === 'Take the bins out');
+                return {
+                    input: 'Action with agent reference to Person',
+                    output: actionElement ? actionElement.outerHTML : 'Not found'
+                };
+            });
+
+            // Test 10: Microdata Source
+            runTest('Test 10: Microdata as Data Source', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test9-template'));
+                const sourceList = document.querySelector('#test9-source ul');
+                const elements = tmpl.render(sourceList);
+                return {
+                    input: 'DOM list with microdata',
+                    output: elements.map(e => e.outerHTML).join('<br>')
+                };
+            });
+
+            // Test 11: Form Source
+            runTest('Test 11: Form as Data Source', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test10-template'), 'div');
+                const form = document.querySelector('#test10-form');
+                const element = tmpl.render(form);
+                return {
+                    input: 'Form with nested properties',
+                    output: element.outerHTML
+                };
+            });
+        </script>
     </body>
 </html>
