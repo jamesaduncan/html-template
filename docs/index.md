@@ -4,6 +4,8 @@
 
 HTMLTemplate is a powerful, microdata-based HTML templating system that bridges the gap between semantic HTML and dynamic data rendering. It leverages HTML5 microdata attributes (`itemprop`, `itemtype`, `itemscope`) to create templates that are both machine-readable and human-maintainable.
 
+For a language-agnostic specification of the template format and behavior, see the [Template Specification](TEMPLATE-SPECIFICATION.md).
+
 ## Key Features
 
 ### 1. **Microdata-Based Templating**

@@ -381,7 +381,9 @@ other microdata elements.
     ```
 
 If the microdata elements have an id attribute, then the rendered elements will get
-the itemid attribute, and reference the source:
+the itemid attribute, and reference the source. The itemid is generated using the 
+source element's baseURI, not the current document's baseURI. This ensures correct
+URL resolution when rendering microdata from external documents:
 
    ```html
     <base href="https://example.com/people">
@@ -411,6 +413,43 @@ the itemid attribute, and reference the source:
         // </div>']
     </script>
     ```
+
+### Cross-Document Rendering
+
+When rendering microdata elements from external documents (e.g., via fetch or iframe),
+the itemid is generated using the source element's baseURI, preserving the original
+document context:
+
+   ```html
+    <!-- Current document at https://myapp.com/dashboard -->
+    <template id="person-template">        
+        <div itemscope itemtype="https://schema.org/Person">
+            <h1 itemprop="name"></h1>
+        </div>        
+    </template>
+    <script>
+        import { HTMLTemplate } from "https://jamesaduncan.github.io/html-template/index.mjs";
+        
+        // Fetch microdata from another domain
+        const response = await fetch('https://external-api.com/data/people.html');
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Assuming the fetched HTML has <base href="https://external-api.com/data/">
+        // and contains: <li id="person123" itemscope itemtype="https://schema.org/Person">
+        
+        const tmpl = new HTMLTemplate( document.querySelector('#person-template') );
+        const elements = tmpl.render( doc.querySelector('ul') );
+        
+        // The itemid uses the source element's baseURI, not the current document's
+        elements[0].getAttribute('itemid')
+        // "https://external-api.com/data/#person123" (NOT "https://myapp.com/dashboard#person123")
+    </script>
+    ```
+
+This behavior ensures that microdata maintains its semantic integrity and correct
+identification regardless of where it's being rendered.
 
 Templates can also be rendered from a form. To specify nested properties in the form, use
 dot notation in the form element's name.

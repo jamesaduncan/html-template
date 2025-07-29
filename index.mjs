@@ -319,9 +319,27 @@ class HTMLTemplate {
      */
     _extractFromFormData(formData) {
         const data = {};
+        const processedKeys = new Set();
         
         for (const [key, value] of formData.entries()) {
-            this._setNestedProperty(data, key, value);
+            if (processedKeys.has(key)) {
+                continue;
+            }
+            
+            // Get all values for this key (handles multiple checkboxes, etc.)
+            const allValues = formData.getAll(key);
+            
+            if (allValues.length > 1) {
+                // Multiple values - treat as array
+                for (const val of allValues) {
+                    this._setNestedProperty(data, key + '[]', val);
+                }
+            } else {
+                // Single value
+                this._setNestedProperty(data, key, value);
+            }
+            
+            processedKeys.add(key);
         }
         
         return data;
@@ -658,7 +676,7 @@ class HTMLTemplate {
      */
     _addItemId(element, data) {
         if (data && data['@id'] && element.hasAttribute('itemscope') && !element.hasAttribute('itemid')) {
-            const baseURI = document.baseURI;
+            const baseURI = element.baseURI;
             element.setAttribute('itemid', baseURI + '#' + data['@id']);
         }
     }

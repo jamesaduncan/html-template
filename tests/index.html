@@ -145,14 +145,30 @@
         <form id="test10-form" style="display:none">
             <input type="text" name="name" value="John Doe">
             <input type="text" name="address.city" value="New York">
-            <input type="text" name="hobbies[]" value="Reading">
-            <input type="text" name="hobbies[]" value="Gaming">
+            <input type="text" name="hobbies" value="Reading">
+            <input type="text" name="hobbies" value="Gaming">
         </form>
         <template id="test10-template">
             <div>
                 <h1 itemprop="name"></h1>
                 <p>City: <span itemprop="address" itemscope><span itemprop="city"></span></span></p>
                 <ul><li itemprop="hobbies[]"></li></ul>
+            </div>
+        </template>
+
+        <!-- Test 11: Checkbox Array Bug -->
+        <form id="test11-form" style="display:none">
+            <input type="text" name="entity" value="admin">
+            <input type="checkbox" name="method" value="GET" checked>
+            <input type="checkbox" name="method" value="POST" checked>
+            <input type="checkbox" name="method" value="PUT">
+            <input type="checkbox" name="method" value="DELETE" checked>
+        </form>
+        <template id="test11-template">
+            <div>
+                <h3>Entity: <span itemprop="entity"></span></h3>
+                <h4>Methods:</h4>
+                <ul><li itemprop="method[]"></li></ul>
             </div>
         </template>
 
@@ -356,6 +372,17 @@
                 const element = tmpl.render(form);
                 return {
                     input: 'Form with nested properties',
+                    output: element.outerHTML
+                };
+            });
+
+            // Test 12: Checkbox Array Bug
+            runTest('Test 12: Checkbox Array Bug', () => {
+                const tmpl = new HTMLTemplate(document.querySelector('#test11-template'), 'div');
+                const form = document.querySelector('#test11-form');
+                const element = tmpl.render(form);
+                return {
+                    input: 'Form with multiple checked checkboxes named "method"',
                     output: element.outerHTML
                 };
             });

@@ -53,6 +53,7 @@ Comprehensive documentation is available in the [docs](docs/) directory:
 - **[Data Sources](docs/data-sources.md)** - Working with different data sources
 - **[Advanced Features](docs/advanced-features.md)** - Constraints, scoping, and type matching
 - **[Examples](docs/examples.md)** - Real-world usage examples
+- **[Template Specification](docs/TEMPLATE-SPECIFICATION.md)** - Language-agnostic specification for implementations
 
 ## 💡 Why HTMLTemplate?
 
